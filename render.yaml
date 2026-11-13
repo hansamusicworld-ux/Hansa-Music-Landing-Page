@@ -1,0 +1,35 @@
+# Paid production Blueprint. Review Render's current compute/storage prices before applying.
+# Existing preview data is not automatically copied into this new database.
+services:
+  - type: web
+    name: hansa-music-web
+    runtime: node
+    region: singapore
+    plan: 0.5c-512mb
+    buildCommand: npm ci --include=dev && npm run build
+    preDeployCommand: npx tsx scripts/prepare-production.ts
+    startCommand: npm run start -- --hostname 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NODE_ENV
+        value: production
+      - key: HANSA_PUBLIC_SITE
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hansa-music-db
+          property: connectionString
+      - key: HANSA_OWNER_PASSWORD
+        sync: false
+
+databases:
+  - name: hansa-music-db
+    region: singapore
+    plan: 0.1c-256mb
+    postgresMajorVersion: "16"
+    diskSizeGB: 5
+    databaseName: hansa_music
+    user: hansa_music
+    ipAllowList: []

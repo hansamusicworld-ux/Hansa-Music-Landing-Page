@@ -1,0 +1,15 @@
+# Never publish credentials or local runtime state.
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+out/
+artifacts/
+playwright-report/
+test-results/
+*.tsbuildinfo
+*.log
+.DS_Store
+backups/
+# Keep package-lock.json, public/, render.yaml, scripts/ and drizzle/ in the repository.
